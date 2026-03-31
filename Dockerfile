@@ -1,7 +1,9 @@
 FROM python:3.10-slim
 
-# Install system dependencies (ffmpeg is crucial for yt-dlp)
-RUN apt-get update && apt-get install -y ffmpeg curl && rm -rf /var/lib/apt/lists/*
+# [UPDATED] Install FFmpeg AND Node.js (Crucial for YouTube's JS challenges)
+RUN apt-get update && \
+    apt-get install -y ffmpeg curl nodejs npm && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -16,6 +18,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PORT=10000
 EXPOSE $PORT
 
-# Run the Engine using Gunicorn (Production Grade WSGI)
-# Timeout set to 600s (10 mins) to prevent crashes on large downloads
+# Run the Engine using Gunicorn
 CMD gunicorn app:app --bind 0.0.0.0:$PORT --timeout 600 --workers 2
